@@ -16,6 +16,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Room, RoomEvent } from "livekit-client";
 import { useCallback, useEffect, useState } from "react";
 import type { ConnectionDetails } from "./api/connection-details/route";
+import { useWakeLock } from "@/hooks/useWakeLock";
 
 export default function Page() {
   const [room] = useState(new Room());
@@ -62,6 +63,10 @@ export default function Page() {
 
 function SimpleVoiceAssistant(props: { onConnectButtonClicked: () => void }) {
   const { state: agentState } = useVoiceAssistant();
+  // Enable wake lock when agent is connected
+  // Keep screen on when agent is active
+  useWakeLock(agentState === 'connecting' || agentState === 'initializing' || 
+             agentState === 'listening' || agentState === 'thinking' || agentState === 'speaking');
 
   return (
     <>
